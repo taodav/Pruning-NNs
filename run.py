@@ -25,6 +25,12 @@ def get_args():
 
 
 def make_description(args, exclude):
+    """
+    Make a description for our checkpoints.
+    :param args: arguments from argparse
+    :param exclude: arguments to exclude from argparse
+    :return: description of experiment run
+    """
     all_args = vars(args).items()
     included_args = [k + "_" + str(v) for k, v in all_args if k not in exclude]
     return '-'.join(included_args)
@@ -33,16 +39,18 @@ if __name__ == "__main__":
     tf.enable_eager_execution()
     args = get_args()
 
+    # load model
     model = SparseNN(ptype=args.ptype)
 
+    # load dataset
     train_unparsed_dataset, test_unparsed_dataset, train_size, test_size = load_mnist()
     train_dataset = train_unparsed_dataset.map(flatten_function)
-    test_dataset = test_unparsed_dataset.map(flatten_function)
 
+    # shuffle and batch dataset
     batched_train = train_dataset.shuffle(buffer_size=train_size).batch(args.batch_size)
-    batched_test = test_dataset.shuffle(buffer_size=test_size).batch(args.batch_size)
 
-    trainer = SparseTrainer(model, batched_train, batched_test, args)
+    # initialize trainer
+    trainer = SparseTrainer(model, batched_train, args)
 
     trainer.train()
 
