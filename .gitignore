@@ -105,3 +105,11 @@ venv.bak/
 
 # pycharm stuff
 .idea/
+
+# saved models
+checkpoints/*
+!checkpoints/.keep
+
+# logs
+logs/*
+!logs/.keep
